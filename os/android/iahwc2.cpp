@@ -578,6 +578,7 @@ HWC2::Error IAHWC2::HwcDisplay::PresentDisplay(int32_t *retire_fence) {
   // update from the client
   if (display_->PowerMode() == HWC2_POWER_MODE_DOZE_SUSPEND)
     return HWC2::Error::None;
+
   for (std::pair<const hwc2_layer_t, IAHWC2::Hwc2Layer> &l : layers_) {
     if (l.second.IsCursorLayer()) {
       use_cursor_layer = true;
@@ -599,6 +600,7 @@ HWC2::Error IAHWC2::HwcDisplay::PresentDisplay(int32_t *retire_fence) {
         continue;
     }
   }
+
   if (use_client_layer && client_layer_.GetLayer() &&
       client_layer_.GetLayer()->GetNativeHandle() &&
       client_layer_.GetLayer()->GetNativeHandle()->handle_) {
@@ -609,7 +611,9 @@ HWC2::Error IAHWC2::HwcDisplay::PresentDisplay(int32_t *retire_fence) {
   if (use_cursor_layer) {
     if (z_map.size()) {
       if (z_map.rbegin()->second->z_order() > cursor_z_order)
-        cursor_z_order = (z_map.rbegin()->second->z_order()) + 1;
+        cursor_z_order = z_map.rbegin()->second->z_order() + 1;
+      else if (client_z_order > cursor_z_order)
+        cursor_z_order = client_z_order + 1;
     }
     z_map.emplace(std::make_pair(cursor_z_order, cursor_layer));
   }

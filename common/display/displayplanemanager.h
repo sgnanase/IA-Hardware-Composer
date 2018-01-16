@@ -139,6 +139,9 @@ class DisplayPlaneManager {
 
   void SwapSurfaceIfNeeded(DisplayPlaneState *plane);
 
+  bool CheckForDownScaling(DisplayPlaneStateList &composition,
+                           std::vector<OverlayPlane> &commit_planes);
+
   DisplayPlaneHandler *plane_handler_;
   ResourceManager *resource_manager_;
   DisplayPlane *cursor_plane_;

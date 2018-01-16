@@ -193,6 +193,11 @@ class DisplayPlaneState {
   // This should be used only as a hint.
   bool CanUseDisplayUpScaling() const;
 
+  // Returns true if we can benefit by using gpu for
+  // downscaling content of this plane.
+  // This should be used only as a hint.
+  bool CanUseGPUDownScaling() const;
+
   // Set if Plane rotation needs to be handled
   // using GPU or Display.
   void SetRotationType(RotationType type, bool refresh);
@@ -205,6 +210,10 @@ class DisplayPlaneState {
   // Helper to inform that either Display Frame or
   // Source rect of this plane has changed.
   void PlaneRectUpdated();
+
+  void SetDisplayDownScalingFactor(uint32_t factor, bool update_surfaces);
+
+  uint32_t GetDownScalingFactor() const;
 
  private:
   class DisplayPlanePrivateState {
@@ -238,11 +247,17 @@ class DisplayPlaneState {
     bool has_cursor_layer_ = false;
     // Can benefit using display scalar.
     bool can_use_display_scalar_ = false;
+    // Using GPU for downscaling.
+    bool use_down_scaling_ = false;
+    // Can benefit by downscaling using
+    // GPU.
+    bool can_use_downscaling_ = false;
     // Rects(Either Display Frame/Source Rect) have
     // changed.
     bool rect_updated_ = true;
     // Display cannot support the required rotation.
     bool unsupported_siplay_rotation_ = false;
+    uint32_t down_scaling_factor_ = 1;
     // Any offscreen surfaces used by this
     // plane.
     std::vector<NativeSurface *> surfaces_;

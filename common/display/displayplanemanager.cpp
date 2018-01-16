@@ -333,6 +333,16 @@ bool DisplayPlaneManager::ValidateLayers(
           DisplayPlaneState::ReValidationType::kNone) {
         re_validation = true;
       }
+
+      if (plane.IsUsingPlaneScalar() || !plane.CanUseGPUDownScaling() ||
+          (plane.GetDownScalingFactor() > 1)) {
+        continue;
+      }
+
+      plane.SetDisplayDownScalingFactor(4, true);
+      if (!plane_handler_->TestCommit(commit_planes)) {
+        plane.SetDisplayDownScalingFactor(1, true);
+      }
     }
   }
 
